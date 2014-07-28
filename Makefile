@@ -1,5 +1,5 @@
 CXX = clang++
-OBJS = main.o
+OBJS = main.o renderer.o
 EXECNAME = waer
 
 default: $(EXECNAME)

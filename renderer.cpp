@@ -29,7 +29,7 @@ Renderer::Renderer()
 	_renderer = SDL_CreateRenderer(_window, -1, 0);
 	assertf(_renderer != NULL, "Failed to create renderer: %s", SDL_GetError());
 
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(_renderer, 20, 20, 20, 255);
 	SDL_RenderClear(_renderer);
 
 	SDL_Surface *squareSurf = SDL_LoadBMP("square.bmp");
@@ -39,7 +39,7 @@ Renderer::Renderer()
 	SDL_FreeSurface(squareSurf);
 }
 
-void Renderer::Draw()
+void Renderer::MainLoop(std::vector<Particle> &particles)
 {
 	SDL_Event event;
 	bool done = false;
@@ -69,8 +69,12 @@ void Renderer::Draw()
 
 		SDL_RenderClear(_renderer);
 
-		SDL_Rect dest = { 10, 20, 5, 5 };
-		SDL_RenderCopy(_renderer, _square, NULL, &dest);
+		SDL_Rect dest = { 0, 0, 5, 5 };
+		for (auto &p : particles) {
+			dest.x = p.position.x;
+			dest.y = p.position.y;
+			SDL_RenderCopy(_renderer, _square, NULL, &dest);
+		}
 
 		SDL_RenderPresent(_renderer);
 	}

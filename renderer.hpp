@@ -1,6 +1,8 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
+#include "physics.hpp"
+
 #include <SDL2/SDL.h>
 #include <string>
 #include <stdexcept>
@@ -12,7 +14,7 @@ class Renderer
 	SDL_Texture *_square;
 public:
 	Renderer();
-	void Draw();
+	void MainLoop(std::vector<Particle> &particles);
 	~Renderer();
 };
 

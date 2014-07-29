@@ -10,7 +10,7 @@ void assertf(bool condition, const char *format, ...)
 		va_end(args);
 		std::string outputStr = output;
 		outputStr += '\n';
-		throw outputStr;
+		throw std::runtime_error(outputStr);
 	}
 }
 
@@ -28,15 +28,57 @@ Renderer::Renderer()
 
 	_renderer = SDL_CreateRenderer(_window, -1, 0);
 	assertf(_renderer != NULL, "Failed to create renderer: %s", SDL_GetError());
+
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+	SDL_RenderClear(_renderer);
+
+	SDL_Surface *squareSurf = SDL_LoadBMP("square.bmp");
+	assertf(squareSurf != NULL,
+			"Failed to load image \"square.bmp\": %s", SDL_GetError());
+	_square = SDL_CreateTextureFromSurface(_renderer, squareSurf);
+	SDL_FreeSurface(squareSurf);
 }
 
 void Renderer::Draw()
 {
-	SDL_Delay(1000);
+	SDL_Event event;
+	bool done = false;
+	double time = 0.0;
+	const double dt = 0.01;
+
+	double currentTime = SDL_GetTicks() / 1000.0;
+	double accumulator = 0.0;
+
+	while (!done) {
+		while (SDL_PollEvent(&event) != 0) {
+			if (event.type == SDL_QUIT)
+				done = true;
+		}
+
+		const double newTime = SDL_GetTicks() / 1000.0;
+		const double frameTime = newTime - currentTime;
+		currentTime = newTime;
+
+		accumulator += frameTime;
+
+		while (accumulator >= dt) {
+			// update(dt, time);
+			accumulator -= dt;
+			time += dt;
+		}
+
+		SDL_RenderClear(_renderer);
+
+		SDL_Rect dest = { 10, 20, 5, 5 };
+		SDL_RenderCopy(_renderer, _square, NULL, &dest);
+
+		SDL_RenderPresent(_renderer);
+	}
 }
 
 Renderer::~Renderer()
 {
+	SDL_DestroyTexture(_square);
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);
 	SDL_Quit();

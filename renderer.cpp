@@ -62,8 +62,7 @@ void Renderer::MainLoop(std::vector<Particle> &particles)
 		accumulator += frameTime;
 
 		while (accumulator >= dt) {
-			for (auto &p : particles)
-				p.Update(dt);
+			UpdateParticles(dt, particles);
 			accumulator -= dt;
 			time += dt;
 		}

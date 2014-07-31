@@ -1,5 +1,5 @@
 CXX = clang++
-OBJS = main.o renderer.o physics.o
+OBJS = $(patsubst source/%.cpp, objs/%.o, $(shell find source -name '*cpp'))
 EXECNAME = waer
 
 default: $(EXECNAME)
@@ -8,7 +8,7 @@ default: $(EXECNAME)
 $(EXECNAME): $(OBJS)
 	$(CXX) -o $@ $^ -lSDL2
 
-%.o: %.cpp
+objs/%.o: source/%.cpp
 	$(CXX) -c -o $@ $< -Wall -Wextra -g -std=c++0x
 
 clean:
